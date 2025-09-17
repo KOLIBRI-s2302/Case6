@@ -50,7 +50,7 @@ def sentences (text):
                 if letter in 'aeiouёуеыаоэяиюAEIOUЁУЕЫАОЭЯИЮ':
                     count_syllables += 1
     
-    text_in_words = re.sub(r'[!?]', '.', text)
+    avg_len_sen = count_words/count_sentences
     print(count_sentences,'- Number of sentences')
     print(avg_len_sen,'- Average length of sentences')
 
@@ -147,6 +147,7 @@ def main():
 
     print(flash_index, '- Index of Flash')
 main()
+
 
 
 
