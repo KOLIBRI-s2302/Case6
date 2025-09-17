@@ -7,8 +7,6 @@ from translate import Translator
 lang = -1
 all_words = -1
 all_sonars = -1
-avg_sonars = -1
-avg_len_sen = -1
 count_sentences = -1
 flash_index = -1
 
@@ -18,12 +16,13 @@ def language(text):
     :return: Return lang, that show language of the text
     '''
     global lang
-    finder=sum(ord(letter) for letter in text)
+    finder = sum(ord(letter) for letter in text)
 
     if 64<finder/len(text)<130:
-        lang = 1 #Англ
+        lang = 1 #EU
     if (140<finder/len(text)<1120):
-        lang = 0 #Русс
+        lang = 0 #RU
+
 
 def sentences (text):
     '''
@@ -50,11 +49,10 @@ def sentences (text):
             for letter in word:
                 if letter in 'aeiouёуеыаоэяиюAEIOUЁУЕЫАОЭЯИЮ':
                     count_syllables += 1
-
-    avg_len_sen = count_words / count_sentences
+    
     text_in_words = re.sub(r'[!?]', '.', text)
-    print(count_sentences,'- Количество предложений')
-    print(avg_len_sen,'- Средняя длина предложений')
+    print(count_sentences,'- Number of sentences')
+    print(avg_len_sen,'- Average length of sentences')
 
 
 def sonar_and_words(text):
@@ -83,10 +81,10 @@ def sonar_and_words(text):
 
     all_words = (len(words))
     all_sonars = count
-    avg_sonars = count/len(words)
-    print(len(words), '- Количество слов')
-    print(count, '- Количество гласных')
-    print(count / len(words), '- Среднее количество слогов в словах')
+    print(len(words), '- Number of words in text')
+    print(count, '- Number of sonars')
+    print(count / len(words), '- Average number of syllables in words')
+
 
 def analyze_text(text):
     '''
@@ -97,7 +95,7 @@ def analyze_text(text):
     latin = any('a' <= i.lower() <= 'z' for i in text)
 
     if cyrillic and latin:
-        print('Оценить тональность и объективность невозможно, текст содержит разные языки.')
+        print('Cant define tone of text: text contain several languages')
         return
     if cyrillic:
         translator = Translator(to_lang = 'en', from_lang = 'ru')
@@ -109,16 +107,17 @@ def analyze_text(text):
     polarity = blob.sentiment.polarity
     subjectivity = blob.sentiment.subjectivity
 
-    if polarity>0:
-        tone = 'положительный'
-    elif polarity<0:
-        tone = 'отрицательный'
+    if polarity > 0.33:
+        tone = 'positive'
+    elif polarity < -0.33:
+        tone = 'negative'
     else:
-        tone = 'нейтральный'
+        tone = 'neutral'
 
     objectivity = (1 - subjectivity) * 100
-    print('Тональность текста: ' + tone)
-    print('Объективность: ' + str(round(objectivity, 1)) + '%')
+    print('Tone of the text: ' + tone)
+    print('Objectivity: ' + str(round(objectivity, 1)) + '%')
+
 
 def main():
     '''
@@ -146,7 +145,8 @@ def main():
     if lang == 0:
         flash_index = 206.835 - 1.52 * (all_words / count_sentences) - 65.14 * (all_sonars / all_words)
 
-    print(flash_index)
+    print(flash_index, '- Index of Flash')
 main()
+
 
 
